@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: appcore_app
+    ports:
+      - "80:80"
+    volumes:
+      - ./app:/var/www/html/
+    depends_on:
+      - db
+    networks:
+      - appcore_network
+
+  db:
+    image: mysql:5.7
+    container_name: appcore_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: appcore_db
+      MYSQL_USER: appcore_user
+      MYSQL_PASSWORD: userpassword
+    ports:
+      - "3600:3306"
+    volumes:
+      - appcore_db_data:/var/lib/mysql
+      - ./db_init:/docker-entrypoint-initdb.d # Monta o script de inicialização
+    networks:
+      - appcore_network
+
+volumes:
+  appcore_db_data:
+
+networks:
+  appcore_network:
+    driver: bridge
