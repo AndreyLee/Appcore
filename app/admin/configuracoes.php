@@ -1,21 +1,18 @@
 <?php
 require_once '../config.php';
+require_once 'includes/functions.php';
 
 session_start();
 
-// Acesso restrito a 'super_admin'
 if (!isset($_SESSION['admin_logged_in']) || !isset($_SESSION['admin_user_role']) || $_SESSION['admin_user_role'] !== 'super_admin') {
     header('Location: login.php?erro=' . urlencode('Acesso negado. Apenas Super Admins podem acessar as configurações.'));
     exit;
 }
 
 $mensagem = '';
-$mensagem_tipo = ''; // 'sucesso' ou 'erro'
+$mensagem_tipo = '';
 
-// Lógica para processar as ações de backup e restauração
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-
-    // Ação de Backup
     if ($_POST['action'] === 'backup') {
         $backup_filename = DB_NAME . '_backup_' . date("Y-m-d_H-i-s") . '.sql';
         $command = sprintf(
@@ -26,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             escapeshellarg(DB_NAME)
         );
 
-        // Limpa qualquer saída que possa ter sido iniciada
         ob_start();
         passthru($command, $return_var);
         $dump = ob_get_clean();
@@ -43,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
     }
 
-    // Ação de Restauração
     if ($_POST['action'] === 'restore') {
         if (isset($_FILES['backup_file']) && $_FILES['backup_file']['error'] == UPLOAD_ERR_OK) {
             $file_tmp_path = $_FILES['backup_file']['tmp_name'];
@@ -60,7 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     escapeshellarg($file_tmp_path)
                 );
 
-                // Usar exec para capturar a saída e o status de retorno corretamente
                 $output = [];
                 $return_var = -1;
                 exec($command, $output, $return_var);
@@ -83,90 +77,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
+$page_title = 'Configurações - Admin AppCore';
+$active_page = 'configuracoes';
+require_once 'templates/header.php';
+
+display_toast($mensagem, $mensagem_tipo);
 ?>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurações - Admin AppCore</title>
-    <link rel="icon" type="image/png" href="../assets/favicon_appcore.png">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/admin_style.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-<body>
-    <header class="admin-header">
-        <h1>Painel Administrativo - AppCore</h1>
-        <nav>
-            <a href="index.php">Listar Sistemas</a>
-            <a href="gerenciar_sistema.php">Adicionar Sistema</a>
-            <?php if (isset($_SESSION['admin_user_role']) && $_SESSION['admin_user_role'] === 'super_admin'): ?>
-                <a href="gerenciar_usuarios.php">Gerenciar Usuários</a>
-                <a href="configuracoes.php" class="active">Configurações</a>
-            <?php endif; ?>
-            <a href="alterar_senha.php">Alterar Senha</a>
-            <a href="../index.php">Voltar a Home</a>
-            <a href="logout.php">Sair</a>
-        </nav>
-    </header>
-    <main class="admin-main">
-        <h2>Configurações do Sistema</h2>
 
-        <?php if ($mensagem): ?>
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: '<?php echo ($mensagem_tipo === "sucesso") ? "success" : "error"; ?>',
-                        title: '<?php echo addslashes(htmlspecialchars($mensagem)); ?>',
-                        showConfirmButton: false,
-                        showCloseButton: true,
-                        timer: 5000,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.addEventListener('mouseenter', Swal.stopTimer)
-                            toast.addEventListener('mouseleave', Swal.resumeTimer)
-                        }
-                    });
-                });
-            </script>
-        <?php endif; ?>
+<h2>Configurações do Sistema</h2>
 
-        <!-- Seção de Backup -->
-        <div class="config-section">
-            <h3>Backup do Banco de Dados</h3>
-            <p>Clique no botão abaixo para baixar um arquivo .sql com o backup completo do banco de dados atual.</p>
-            <form action="configuracoes.php" method="POST">
-                <input type="hidden" name="action" value="backup">
-                <button type="submit" class="btn-admin">Fazer Backup Agora</button>
-            </form>
+<div class="config-section">
+    <h3>Backup do Banco de Dados</h3>
+    <p>Clique no botão abaixo para baixar um arquivo .sql com o backup completo do banco de dados atual.</p>
+    <form action="configuracoes.php" method="POST">
+        <input type="hidden" name="action" value="backup">
+        <button type="submit" class="btn-admin">Fazer Backup Agora</button>
+    </form>
+</div>
+
+<div class="config-section">
+    <h3>Restaurar Backup do Banco de Dados</h3>
+    <div class="aviso-importante">
+        <h4><strong>ATENÇÃO:</strong> Ação Irreversível</h4>
+        <p>Restaurar a partir de um arquivo de backup irá <strong>APAGAR TODOS OS DADOS ATUAIS</strong> e substituí-los pelos dados do arquivo.</p>
+        <p>Use com extremo cuidado. Recomenda-se fazer um backup dos dados atuais antes de prosseguir.</p>
+    </div>
+    <form action="configuracoes.php" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Você tem CERTEZA ABSOLUTA que deseja substituir todos os dados atuais por este backup? Esta ação não pode ser desfeita.');">
+        <input type="hidden" name="action" value="restore">
+        <div>
+            <label for="backup_file">Arquivo de Backup (.sql):</label>
+            <input type="file" id="backup_file" name="backup_file" accept=".sql" required>
+            <small>Selecione o arquivo de backup (.sql) que você deseja restaurar.</small>
         </div>
-
-        <!-- Seção de Restauração -->
-        <div class="config-section">
-            <h3>Restaurar Backup do Banco de Dados</h3>
-            <div class="aviso-importante">
-                <h4><strong>ATENÇÃO:</strong> Ação Irreversível</h4>
-                <p>Restaurar a partir de um arquivo de backup irá <strong>APAGAR TODOS OS DADOS ATUAIS</strong> e substituí-los pelos dados do arquivo.</p>
-                <p>Use com extremo cuidado. Recomenda-se fazer um backup dos dados atuais antes de prosseguir.</p>
-            </div>
-            <form action="configuracoes.php" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Você tem CERTEZA ABSOLUTA que deseja substituir todos os dados atuais por este backup? Esta ação não pode ser desfeita.');">
-                <input type="hidden" name="action" value="restore">
-                <div>
-                    <label for="backup_file">Arquivo de Backup (.sql):</label>
-                    <input type="file" id="backup_file" name="backup_file" accept=".sql" required>
-                    <small>Selecione o arquivo de backup (.sql) que você deseja restaurar.</small>
-                </div>
-                <div>
-                    <button type="submit" class="btn-admin btn-perigo">Restaurar a partir do Arquivo</button>
-                </div>
-            </form>
+        <div>
+            <button type="submit" class="btn-admin btn-perigo">Restaurar a partir do Arquivo</button>
         </div>
-    </main>
-    <footer>
-        <p>&copy; <?php echo date("Y"); ?> Sesc Pinheiros. Painel Administrativo.</p>
-    </footer>
-</body>
-</html>
+    </form>
+</div>
+
+<?php require_once 'templates/footer.php'; ?>

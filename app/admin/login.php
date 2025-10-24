@@ -1,18 +1,18 @@
 <?php
 session_start();
-require_once '../config.php'; // Agora usaremos $pdo
+require_once '../config.php';
+require_once 'includes/functions.php';
 
 $mensagem_erro = '';
-$mensagem_sucesso = ''; // Para a mensagem de senha alterada
+$mensagem_sucesso = '';
 
-// Verificar se há mensagem de status da alteração de senha
-if(isset($_GET['status']) && $_GET['status'] === 'senha_alterada') {
+if (isset($_GET['status']) && $_GET['status'] === 'senha_alterada') {
     $mensagem_sucesso = "Senha alterada com sucesso! Por favor, faça login novamente.";
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username_input = trim($_POST['username'] ?? '');
-    $password_input = $_POST['password'] ?? ''; // Não trimar a senha aqui
+    $password_input = $_POST['password'] ?? '';
 
     if (empty($username_input) || empty($password_input)) {
         $mensagem_erro = 'Usuário e senha são obrigatórios.';
@@ -24,25 +24,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute();
             $usuario_db = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($usuario_db) {
-                // Usuário encontrado, agora verificar a senha
-                if (password_verify($password_input, $usuario_db['password_hash'])) {
-                    // Senha correta
-                    session_regenerate_id(true);
-                    $_SESSION['admin_logged_in'] = true;
-                    $_SESSION['admin_user_id'] = $usuario_db['id'];
-                    $_SESSION['admin_username'] = $usuario_db['username'];
-                    $_SESSION['admin_user_role'] = $usuario_db['role'];
+            if ($usuario_db && password_verify($password_input, $usuario_db['password_hash'])) {
+                session_regenerate_id(true);
+                $_SESSION['admin_logged_in'] = true;
+                $_SESSION['admin_user_id'] = $usuario_db['id'];
+                $_SESSION['admin_username'] = $usuario_db['username'];
+                $_SESSION['admin_user_role'] = $usuario_db['role'];
 
-                    header('Location: index.php');
-                    exit;
-                } else {
-                    // Senha incorreta
-                    $mensagem_erro = 'Usuário ou senha inválidos (debug: senha incorreta).';
-                }
+                header('Location: index.php');
+                exit;
             } else {
-                // Usuário não encontrado
-                $mensagem_erro = 'Usuário ou senha inválidos (debug: usuário não encontrado).';
+                $mensagem_erro = 'Usuário ou senha inválidos.';
             }
         } catch (PDOException $e) {
             $mensagem_erro = "Erro na consulta ao banco de dados: " . $e->getMessage();
@@ -50,17 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Se já estiver logado, redireciona para o painel
 if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
     header('Location: index.php');
     exit;
 }
-
-// Verificar se há mensagem de status da alteração de senha
-if(isset($_GET['status']) && $_GET['status'] === 'senha_alterada') {
-    $mensagem_sucesso = "Senha alterada com sucesso! Por favor, faça login novamente.";
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -68,122 +53,27 @@ if(isset($_GET['status']) && $_GET['status'] === 'senha_alterada') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Admin AppCore</title>
-    <link rel="icon" type"image/png" href="../assets/favicon_appcore.png">
+    <link rel="icon" type="image/png" href="../assets/favicon_appcore.png">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/admin_style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        .login-container {
-            width: 100%;
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .login-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
-        .login-container label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-        }
-        .login-container input[type="text"],
-        .login-container input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .login-container button {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .login-container button:hover {
-            background-color: #0056b3;
-        }
-        .mensagem.erro {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 10px;
-            border: 1px solid #f5c6cb;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .back-to-home {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .back-to-home a {
-            color: #007bff;
-            text-decoration: none;
-            font-size: 0.9em;
-        }
-        .back-to-home a:hover {
-            text-decoration: underline;
-        }
+        body { display: flex; flex-direction: column; min-height: 100vh; }
+        .admin-main { flex: 1; display: flex; align-items: center; justify-content: center; }
+        .login-container { width: 100%; max-width: 400px; margin: 0 auto; }
     </style>
 </head>
 <body>
     <header class="admin-header">
         <h1>AppCore - Login</h1>
     </header>
-    <main>
+    <main class="admin-main">
         <div class="login-container">
             <h2>Acesso ao Painel Administrativo</h2>
-            <?php if (!empty($mensagem_erro)): ?>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'error',
-                            title: '<?php echo addslashes(htmlspecialchars($mensagem_erro)); ?>',
-                            showConfirmButton: false,
-                            showCloseButton: true,
-                            timer: 5000,
-                            timerProgressBar: true,
-                            didOpen: (toast) => {
-                                toast.addEventListener('mouseenter', Swal.stopTimer)
-                                toast.addEventListener('mouseleave', Swal.resumeTimer)
-                            }
-                        });
-                    });
-                </script>
-            <?php endif; ?>
-            <?php if (!empty($mensagem_sucesso)): ?>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'success',
-                            title: '<?php echo addslashes(htmlspecialchars($mensagem_sucesso)); ?>',
-                            showConfirmButton: false,
-                            showCloseButton: true,
-                            timer: 5000,
-                            timerProgressBar: true,
-                            didOpen: (toast) => {
-                                toast.addEventListener('mouseenter', Swal.stopTimer)
-                                toast.addEventListener('mouseleave', Swal.resumeTimer)
-                            }
-                        });
-                    });
-                </script>
-            <?php endif; ?>
+            <?php
+            if (!empty($mensagem_erro)) display_toast($mensagem_erro, 'erro');
+            if (!empty($mensagem_sucesso)) display_toast($mensagem_sucesso, 'sucesso');
+            ?>
             <form action="login.php" method="POST">
                 <div>
                     <label for="username">Usuário:</label>
