@@ -93,6 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     <link rel="icon" type="image/png" href="../assets/favicon_appcore.png">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/admin_style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <header class="admin-header">
@@ -113,7 +114,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         <h2>Configurações do Sistema</h2>
 
         <?php if ($mensagem): ?>
-            <p class="mensagem <?php echo $mensagem_tipo; ?>"><?php echo htmlspecialchars($mensagem); ?></p>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: '<?php echo ($mensagem_tipo === "sucesso") ? "success" : "error"; ?>',
+                        title: '<?php echo addslashes(htmlspecialchars($mensagem)); ?>',
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                        timer: 5000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+                });
+            </script>
         <?php endif; ?>
 
         <!-- Seção de Backup -->

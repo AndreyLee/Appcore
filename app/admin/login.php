@@ -71,6 +71,7 @@ if(isset($_GET['status']) && $_GET['status'] === 'senha_alterada') {
     <link rel="icon" type"image/png" href="../assets/favicon_appcore.png">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/admin_style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .login-container {
             width: 100%;
@@ -144,10 +145,44 @@ if(isset($_GET['status']) && $_GET['status'] === 'senha_alterada') {
         <div class="login-container">
             <h2>Acesso ao Painel Administrativo</h2>
             <?php if (!empty($mensagem_erro)): ?>
-                <p class="mensagem erro"><?php echo htmlspecialchars($mensagem_erro); ?></p>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: '<?php echo addslashes(htmlspecialchars($mensagem_erro)); ?>',
+                            showConfirmButton: false,
+                            showCloseButton: true,
+                            timer: 5000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        });
+                    });
+                </script>
             <?php endif; ?>
             <?php if (!empty($mensagem_sucesso)): ?>
-                <p class="mensagem sucesso"><?php echo htmlspecialchars($mensagem_sucesso); ?></p>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: '<?php echo addslashes(htmlspecialchars($mensagem_sucesso)); ?>',
+                            showConfirmButton: false,
+                            showCloseButton: true,
+                            timer: 5000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        });
+                    });
+                </script>
             <?php endif; ?>
             <form action="login.php" method="POST">
                 <div>
