@@ -1,158 +1,36 @@
-/* Estilos Gerais */
+/* Estilos para o Easter Egg e ajustes finos */
+
+/* Garante que o body ocupe toda a altura da viewport */
+body, html {
+    min-height: 100%;
+}
+
+/* Força o footer a ficar na parte inferior, se o conteúdo for curto */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f7f6;
-    color: #333;
-}
-
-header {
-    background-color: #007bff; /* Cor principal solicitada */
-    color: #ffffff;
-    padding: 1.5rem 1rem;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    display: flex; /* Para alinhar título e nav */
-    justify-content: space-between; /* Coloca título na esquerda e nav na direita */
-    align-items: center; /* Alinha verticalmente ao centro */
-}
-
-.main-header h1 {
-    margin: 0;
-    font-size: 1.8rem;
-    font-weight: 500;
-    text-align: center;
-    flex: 1;
-}
-
-.main-header nav {
-    /* O nav em si não precisa de muito estilo aqui, o flex do pai resolve */
-}
-
-.main-header .nav-link {
-    color: #fff;
-    text-decoration: none;
-    padding: 8px 0; /* Reduzido o padding lateral para não parecer botão */
-    border-radius: 4px;
-    /* background-color: rgba(255, 255, 255, 0.15); */ /* Removido background */
-    transition: color 0.2s ease; /* Transição na cor do texto */
-    font-size: 0.9rem;
-}
-
-.main-header .nav-link:hover {
-    /* background-color: rgba(255, 255, 255, 0.3); */ /* Removido background hover */
-    color: #e0e0e0; /* Leve mudança de cor no hover */
+    display: flex;
+    flex-direction: column;
 }
 
 main {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 20px auto;
+    flex: 1;
 }
 
-footer {
-    text-align: center;
-    padding: 15px;
-    background-color: #e9ecef;
-    color: #6c757d;
-    font-size: 0.9em;
-    border-top: 1px solid #dee2e6;
-    margin-top: 30px;
+.card-img-top {
+    height: 200px;
+    object-fit: contain; /* 'contain' para não cortar as imagens, 'cover' para preencher */
+    padding: 1rem;
 }
 
-/* Grid de Sistemas */
-.sistemas-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
-    margin-top: 20px;
+.card-body {
+    display: flex;
+    flex-direction: column;
 }
 
-.sistema-card {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+.card-text {
+    flex-grow: 1;
 }
 
-.sistema-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-}
-
-.sistema-card img {
-    max-width: 100%;
-    height: 150px; /* Altura fixa para a imagem */
-    object-fit: contain; /* ou 'cover' dependendo do efeito desejado */
-    border-radius: 4px;
-    margin-bottom: 15px;
-    background-color: #f0f0f0; /* Fundo para imagens com transparência ou se não carregar */
-}
-
-.sistema-card h2 {
-    font-size: 1.4em;
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #007bff;
-}
-
-.sistema-card p {
-    font-size: 0.95em;
-    color: #555;
-    margin-bottom: 15px;
-    min-height: 60px; /* Para alinhar cards com descrições de tamanhos diferentes */
-}
-
-.btn-acessar {
-    display: inline-block;
-    background-color: #007bff;
-    color: #ffffff;
-    padding: 10px 20px;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
-}
-
-.btn-acessar:hover {
-    background-color: #0056b3;
-    color: #ffffff;
-}
-
-/* Mensagens de feedback (usadas no admin, mas podem ser úteis globalmente) */
-.mensagem {
-    padding: 10px 15px;
-    margin-bottom: 15px;
-    border-radius: 4px;
-    text-align: center;
-}
-.mensagem.sucesso {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-.mensagem.erro {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-/* Responsividade básica */
-@media (max-width: 768px) {
-    header h1 {
-        font-size: 1.8rem;
-    }
-    .sistemas-grid {
-        grid-template-columns: 1fr; /* Uma coluna em telas menores */
-    }
-}
-
-/* Estilos para o Easter Egg */
+/* Easter Egg */
 #dead-pixel {
     position: fixed;
     bottom: 10px;
@@ -165,7 +43,7 @@ footer {
 }
 
 #surprise-container {
-    display: none; /* Inicia escondido */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
