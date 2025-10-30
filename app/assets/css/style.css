@@ -1,11 +1,7 @@
-/* Estilos para o Easter Egg e ajustes finos */
-
-/* Garante que o body ocupe toda a altura da viewport */
-body, html {
+html, body {
     min-height: 100%;
 }
 
-/* Força o footer a ficar na parte inferior, se o conteúdo for curto */
 body {
     display: flex;
     flex-direction: column;
@@ -15,22 +11,7 @@ main {
     flex: 1;
 }
 
-.card-img-top {
-    height: 200px;
-    object-fit: contain; /* 'contain' para não cortar as imagens, 'cover' para preencher */
-    padding: 1rem;
-}
-
-.card-body {
-    display: flex;
-    flex-direction: column;
-}
-
-.card-text {
-    flex-grow: 1;
-}
-
-/* Easter Egg */
+/* Estilos para o Easter Egg */
 #dead-pixel {
     position: fixed;
     bottom: 10px;
