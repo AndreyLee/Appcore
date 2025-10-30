@@ -75,7 +75,7 @@ try {
         </div>
     </main>
 
-    <footer class="bg-dark text-white text-center p-3 mt-4">
+    <footer class="text-white text-center p-3 fixed-bottom">
         <p class="mb-0">&copy; <?php echo date("Y"); ?> Sesc Pinheiros. Todos os direitos reservados.</p>
     </footer>
 

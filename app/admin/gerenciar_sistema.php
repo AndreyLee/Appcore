@@ -228,7 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
     </main>
 
-    <footer class="bg-dark text-white text-center p-3 mt-4">
+    <footer class="text-white text-center p-3 fixed-bottom">
         <p class="mb-0">&copy; <?php echo date("Y"); ?> Sesc Pinheiros. Painel Administrativo.</p>
     </footer>
 
