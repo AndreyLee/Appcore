@@ -41,7 +41,7 @@ try {
             text-align: center;
             padding: 15px;
             background-color: #007bff;
-            color: #ffffff; /* Ajustado para branco para melhor contraste */
+            color: #6c757d;
             font-size: 0.9em;
             border-top: 1px solid #dee2e6;
             margin-top: 30px;
