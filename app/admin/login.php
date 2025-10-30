@@ -72,60 +72,71 @@ if(isset($_GET['status']) && $_GET['status'] === 'senha_alterada') {
     <link rel="icon" type="image/png" href="../assets/favicon_appcore.png">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
+        header {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
         .form-signin { max-width: 400px; padding: 1rem; }
     </style>
 </head>
-<body class="d-flex align-items-center py-4 bg-body-tertiary h-100">
-    <main class="form-signin w-100 m-auto">
-        <?php if (!empty($mensagem_erro)): ?>
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'error',
-                        title: '<?php echo addslashes(htmlspecialchars($mensagem_erro)); ?>',
-                        showConfirmButton: false,
-                        showCloseButton: true,
-                        timer: 5000,
-                        timerProgressBar: true
+<body class="d-flex flex-column h-100">
+    <header>
+        <h1>AppCore - Login</h1>
+    </header>
+    <main class="d-flex align-items-center py-4 bg-body-tertiary flex-grow-1">
+        <div class="form-signin w-100 m-auto">
+            <?php if (!empty($mensagem_erro)): ?>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: '<?php echo addslashes(htmlspecialchars($mensagem_erro)); ?>',
+                            showConfirmButton: false,
+                            showCloseButton: true,
+                            timer: 5000,
+                            timerProgressBar: true
+                        });
                     });
-                });
-            </script>
-        <?php endif; ?>
-        <?php if (!empty($mensagem_sucesso)): ?>
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'success',
-                        title: '<?php echo addslashes(htmlspecialchars($mensagem_sucesso)); ?>',
-                        showConfirmButton: false,
-                        showCloseButton: true,
-                        timer: 5000,
-                        timerProgressBar: true
+                </script>
+            <?php endif; ?>
+            <?php if (!empty($mensagem_sucesso)): ?>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: '<?php echo addslashes(htmlspecialchars($mensagem_sucesso)); ?>',
+                            showConfirmButton: false,
+                            showCloseButton: true,
+                            timer: 5000,
+                            timerProgressBar: true
+                        });
                     });
-                });
-            </script>
-        <?php endif; ?>
+                </script>
+            <?php endif; ?>
 
-        <form action="login.php" method="POST">
-            <h1 class="h3 mb-3 fw-normal text-center">Acesso ao Painel</h1>
-            <div class="form-floating mb-2">
-                <input type="text" class="form-control" id="username" name="username" placeholder="Usuário" required>
-                <label for="username">Usuário</label>
-            </div>
-            <div class="form-floating">
-                <input type="password" class="form-control" id="password" name="password" placeholder="Senha" required>
-                <label for="password">Senha</label>
-            </div>
-            <button class="btn btn-primary w-100 py-2 mt-3" type="submit">Entrar</button>
-            <p class="mt-3 text-center"><a href="../index.php">Voltar para a Home</a></p>
-            <p class="mt-5 mb-3 text-body-secondary text-center">&copy; <?php echo date("Y"); ?> Sesc Pinheiros</p>
-        </form>
+            <form action="login.php" method="POST">
+                <h1 class="h3 mb-3 fw-normal text-center">Acesso ao Painel</h1>
+                <div class="form-floating mb-2">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Usuário" required>
+                    <label for="username">Usuário</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Senha" required>
+                    <label for="password">Senha</label>
+                </div>
+                <button class="btn btn-primary w-100 py-2 mt-3" type="submit">Entrar</button>
+                <p class="mt-3 text-center"><a href="../index.php">Voltar para a Home</a></p>
+                <p class="mt-5 mb-3 text-body-secondary text-center">&copy; <?php echo date("Y"); ?> Sesc Pinheiros</p>
+            </form>
+        </div>
     </main>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -26,22 +26,33 @@ try {
     <title>AppCore - Sesc Pinheiros</title>
     <link rel="icon" type="image/png" href="assets/favicon_appcore.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        header {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #007bff;
+            color: #ffffff; /* Ajustado para branco para melhor contraste */
+            font-size: 0.9em;
+            border-top: 1px solid #dee2e6;
+            margin-top: 30px;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">AppCore - Sesc Pinheiros</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="admin/login.php">Administrador</a></li>
-                    </ul>
-                </div>
-            </div>
+        <h1>AppCore - Sesc Pinheiros</h1>
+        <nav>
+            <a href="admin/login.php" style="color: white; text-decoration: none;">Administrador</a>
         </nav>
     </header>
 
@@ -64,7 +75,7 @@ try {
         </div>
     </main>
 
-    <footer class="bg-dark text-white text-center p-3 mt-4 fixed-bottom">
+    <footer class="bg-dark text-white text-center p-3 mt-4">
         <p class="mb-0">&copy; <?php echo date("Y"); ?> Sesc Pinheiros. Todos os direitos reservados.</p>
     </footer>
 
