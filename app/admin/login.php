@@ -1,18 +1,17 @@
 <?php
 session_start();
-require_once '../config.php'; // Agora usaremos $pdo
+require_once '../config.php';
 
 $mensagem_erro = '';
-$mensagem_sucesso = ''; // Para a mensagem de senha alterada
+$mensagem_sucesso = '';
 
-// Verificar se há mensagem de status da alteração de senha
 if(isset($_GET['status']) && $_GET['status'] === 'senha_alterada') {
     $mensagem_sucesso = "Senha alterada com sucesso! Por favor, faça login novamente.";
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username_input = trim($_POST['username'] ?? '');
-    $password_input = $_POST['password'] ?? ''; // Não trimar a senha aqui
+    $password_input = $_POST['password'] ?? '';
 
     if (empty($username_input) || empty($password_input)) {
         $mensagem_erro = 'Usuário e senha são obrigatórios.';
@@ -24,25 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute();
             $usuario_db = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($usuario_db) {
-                // Usuário encontrado, agora verificar a senha
-                if (password_verify($password_input, $usuario_db['password_hash'])) {
-                    // Senha correta
-                    session_regenerate_id(true);
-                    $_SESSION['admin_logged_in'] = true;
-                    $_SESSION['admin_user_id'] = $usuario_db['id'];
-                    $_SESSION['admin_username'] = $usuario_db['username'];
-                    $_SESSION['admin_user_role'] = $usuario_db['role'];
-
-                    header('Location: index.php');
-                    exit;
-                } else {
-                    // Senha incorreta
-                    $mensagem_erro = 'Usuário ou senha inválidos (debug: senha incorreta).';
-                }
+            if ($usuario_db && password_verify($password_input, $usuario_db['password_hash'])) {
+                session_regenerate_id(true);
+                $_SESSION['admin_logged_in'] = true;
+                $_SESSION['admin_user_id'] = $usuario_db['id'];
+                $_SESSION['admin_username'] = $usuario_db['username'];
+                $_SESSION['admin_user_role'] = $usuario_db['role'];
+                header('Location: index.php');
+                exit;
             } else {
-                // Usuário não encontrado
-                $mensagem_erro = 'Usuário ou senha inválidos (debug: usuário não encontrado).';
+                $mensagem_erro = 'Usuário ou senha inválidos.';
             }
         } catch (PDOException $e) {
             $mensagem_erro = "Erro na consulta ao banco de dados: " . $e->getMessage();
@@ -50,17 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Se já estiver logado, redireciona para o painel
 if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
     header('Location: index.php');
     exit;
 }
-
-// Verificar se há mensagem de status da alteração de senha
-if(isset($_GET['status']) && $_GET['status'] === 'senha_alterada') {
-    $mensagem_sucesso = "Senha alterada com sucesso! Por favor, faça login novamente.";
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR" class="h-100">
@@ -79,6 +62,14 @@ if(isset($_GET['status']) && $_GET['status'] === 'senha_alterada') {
             text-align: center;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #007bff;
+            color: #6c757d;
+            font-size: 0.9em;
+            border-top: 1px solid #dee2e6;
+        }
         .form-signin { max-width: 400px; padding: 1rem; }
     </style>
 </head>
@@ -91,32 +82,14 @@ if(isset($_GET['status']) && $_GET['status'] === 'senha_alterada') {
             <?php if (!empty($mensagem_erro)): ?>
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'error',
-                            title: '<?php echo addslashes(htmlspecialchars($mensagem_erro)); ?>',
-                            showConfirmButton: false,
-                            showCloseButton: true,
-                            timer: 5000,
-                            timerProgressBar: true
-                        });
+                        Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: '<?php echo addslashes(htmlspecialchars($mensagem_erro)); ?>', showConfirmButton: false, showCloseButton: true, timer: 5000, timerProgressBar: true });
                     });
                 </script>
             <?php endif; ?>
             <?php if (!empty($mensagem_sucesso)): ?>
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'success',
-                            title: '<?php echo addslashes(htmlspecialchars($mensagem_sucesso)); ?>',
-                            showConfirmButton: false,
-                            showCloseButton: true,
-                            timer: 5000,
-                            timerProgressBar: true
-                        });
+                        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: '<?php echo addslashes(htmlspecialchars($mensagem_sucesso)); ?>', showConfirmButton: false, showCloseButton: true, timer: 5000, timerProgressBar: true });
                     });
                 </script>
             <?php endif; ?>
@@ -133,10 +106,12 @@ if(isset($_GET['status']) && $_GET['status'] === 'senha_alterada') {
                 </div>
                 <button class="btn btn-primary w-100 py-2 mt-3" type="submit">Entrar</button>
                 <p class="mt-3 text-center"><a href="../index.php">Voltar para a Home</a></p>
-                <p class="mt-5 mb-3 text-body-secondary text-center">&copy; <?php echo date("Y"); ?> Sesc Pinheiros</p>
             </form>
         </div>
     </main>
+    <footer class="text-white text-center p-3 fixed-bottom">
+        <p class="mb-0">&copy; <?php echo date("Y"); ?> Sesc Pinheiros. Painel Administrativo.</p>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
