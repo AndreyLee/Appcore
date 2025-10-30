@@ -282,7 +282,7 @@ if (isset($_GET['status'])) {
         </div>
     </main>
 
-    <footer class="bg-dark text-white text-center p-3 mt-4">
+    <footer class="bg-dark text-white text-center p-3 mt-4 fixed-bottom">
         <p class="mb-0">&copy; <?php echo date("Y"); ?> Sesc Pinheiros. Painel Administrativo.</p>
     </footer>
 
